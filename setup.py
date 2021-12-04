@@ -23,7 +23,7 @@ test_requirements = [
 setup(
     author="Perry Stallings",
     author_email='astal01@gmail.com',
-    python_requires='>=3.6',
+    python_requires='>=3.8',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
@@ -41,11 +41,11 @@ setup(
     include_package_data=True,
     keywords='parrot_api_core',
     name='parrot-api-core',
-    packages=find_packages(include=['parrot_api.core', 'parrot_api.core.*']),
+    packages=['parrot_api.core'],
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/perrystallings/parrot_api_core',
-    version='0.1.0',
+    version='0.1.1',
     zip_safe=False,
     extras_require={
         'async': [

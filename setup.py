@@ -45,7 +45,7 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/perrystallings/parrot_api_core',
-    version='0.1.1',
+    version='0.1.2',
     zip_safe=False,
     extras_require={
         'async': [

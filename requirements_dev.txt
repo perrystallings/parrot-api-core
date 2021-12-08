@@ -14,3 +14,8 @@ aiohttp>=3.6.2
 aiohttp_jinja2>=1.2.0
 pytest-cov>=2.8.1
 pytest-aiohttp
+tenacity
+requests[security]
+responses
+aioresponses
+python-jose==3.3.0

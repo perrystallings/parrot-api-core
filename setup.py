@@ -11,13 +11,17 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    'connexion[swagger-ui]>=2.6.0'
+    'connexion[swagger-ui]>=2.6.0',
+    'tenacity',
+    'requests[security]',
+    'python-jose==3.3.0'
 ]
 
 test_requirements = [
     'pytest>=3',
     'pytest-aiohttp',
-    'pytest-cov>=2.8.1'
+    'pytest-cov>=2.8.1',
+    'responses'
 ]
 
 setup(
@@ -41,11 +45,11 @@ setup(
     include_package_data=True,
     keywords='parrot_api_core',
     name='parrot-api-core',
-    packages=['parrot_api.core'],
+    packages=['parrot_api.core', 'parrot_api.core.auth', 'parrot_api.core.auth.providers'],
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/perrystallings/parrot_api_core',
-    version='0.1.2',
+    version='0.1.3',
     zip_safe=False,
     extras_require={
         'async': [

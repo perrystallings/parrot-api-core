@@ -11,7 +11,4 @@ def get_token(client_id, client_secret, audience, auth_server):
         url=auth_server, method='POST',
         json=body
     )
-    if status_code == 200:
-        return js
-    else:
-        return None
+    return status_code, js

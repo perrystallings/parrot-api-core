@@ -14,7 +14,7 @@ requirements = [
     'connexion[swagger-ui]>=2.6.0',
     'tenacity',
     'requests[security]',
-    'python-jose==3.3.0'
+    'python-jose==3.3.0',
 ]
 
 test_requirements = [
@@ -49,12 +49,14 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/perrystallings/parrot_api_core',
-    version='0.1.4',
+    version='0.1.7',
     zip_safe=False,
     extras_require={
         'async': [
             'aiohttp>=3.6.2',
             'aiohttp_jinja2>=1.2.0',
+            'orjson',
+            'aioresponses'
         ],
     },
 )

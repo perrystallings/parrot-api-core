@@ -4,26 +4,13 @@ from tenacity import retry, stop_after_attempt, after_log, wait_random_exponenti
 from parrot_api.core import log_event
 
 
-def safe_json_request(method, url, log_input=False, **kwargs):
-    """Convenience function for calling external APIs to simplify error handling.
-
-    :param method: HTTP methond (GET, POST, PUT, etc.)
-    :param url: Request URL.
-    :param kwargs: Additional parameters. See requests.request for details.
-    :return: tuple of status_code and json body as a python dict
-    """
+def make_sync_request_wrapper(method, url, log_payload, **kwargs):
     from requests import HTTPError, ConnectionError
-    import json
-    status_code = None
-    js = dict()
-    payload = dict(url=url, method=method)
-    if log_input:
-        payload['url_params'] = kwargs.get('url_params')
-        payload['json'] = kwargs.get('json')
     try:
-        response = make_sync_request(method=method, url=url, log_payload=payload, **kwargs)
+        response = make_sync_request(method=method, url=url, log_payload=log_payload, **kwargs)
     except ConnectionError:
-        pass
+        status_code = None
+        js = dict()
     except HTTPError as exc:
         resp = json.loads(exc.args[0])
         status_code = resp['status_code']
@@ -31,11 +18,10 @@ def safe_json_request(method, url, log_input=False, **kwargs):
     else:
         status_code = response.status_code
         js = format_response_body(response=response)
-
     return status_code, js
 
 
-@retry(stop=stop_after_attempt(3), reraise=True, wait=wait_random_exponential(multiplier=.5, max=3))
+@retry(stop=stop_after_attempt(3), reraise=True, wait=wait_random_exponential(multiplier=.1, max=1))
 def make_sync_request(method, url, log_payload, **kwargs):
     from requests.exceptions import HTTPError
     try:
@@ -70,12 +56,3 @@ def format_response_body(response):
     except ValueError:
         js['content'] = response.text
     return js
-
-
-def generate_oauth_headers(access_token: str) -> dict:
-    """Convenience function to generate oauth stand authorization header
-
-    :param access_token: Oauth access token
-    :return: Request headers
-    """
-    return {'Authorization': 'Bearer ' + access_token}

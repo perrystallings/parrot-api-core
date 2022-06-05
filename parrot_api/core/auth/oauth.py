@@ -115,20 +115,6 @@ def verify_token(token):
         return decoded_token
 
 
-def filter_request_access_token(token, service_name):
-    from jose import jwt
-    unverified_claims = jwt.get_unverified_claims(token)
-    unverified_audience = unverified_claims.get('aud')
-    internal_audience = get_audience(service_name=service_name)
-    if isinstance(unverified_audience, list) and (
-            internal_audience not in unverified_audience or len(unverified_audience) > 1):
-        return token
-    elif isinstance(unverified_audience, str) and internal_audience != unverified_audience:
-        return token
-    else:
-        return None
-
-
 def handle_token_request(user, body):
     from connexion import request
     token_status, token_response = get_token(
@@ -141,3 +127,41 @@ def handle_token_request(user, body):
 
 def verify_auth(username, password, required_scopes=None):
     return {'sub': username, 'scope': ''}
+
+
+async def verify_token_async(token):
+    from jose import jwt
+    from parrot_api.core.auth.jwt import decode_token
+    from aiohttp.web import HTTPUnauthorized
+    from parrot_api.core import get_settings
+    import six
+    app_settings = get_settings()
+    keys = await get_auth_keys_async()
+    if not keys:
+        raise HTTPUnauthorized
+    try:
+        decoded_token = decode_token(
+            token=token, auth_keys=keys, audiences=app_settings['audiences'],
+            issuers=app_settings['issuers']
+        )
+    except jwt.JWTError as e:
+        six.raise_from(HTTPUnauthorized, e)
+    else:
+        if decoded_token.get('scope') is None and decoded_token.get('scp') is not None:
+            decoded_token['scope'] = decoded_token['scp']
+        return decoded_token
+
+
+async def get_auth_keys_async():
+    from parrot_api.core import get_settings
+    from parrot_api.core.requests import safe_json_request
+    from parrot_api.core import get_memo, set_memo
+    memo_namespace = 'auth_keys'
+    auth_keys = get_memo(namespace=memo_namespace, log_inputs=False, log_value=False)
+    if auth_keys is None:
+        status_code, js = await safe_json_request(method='GET',
+                                                  url=get_settings()['auth_keys_url'], run_async=True)
+        if js:
+            auth_keys = js['keys']
+            set_memo(namespace=memo_namespace, value=auth_keys, log_inputs=False, log_value=False)
+    return auth_keys

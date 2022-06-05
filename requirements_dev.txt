@@ -4,7 +4,7 @@ wheel==0.33.6
 watchdog==0.9.0
 flake8==3.7.8
 tox==3.14.0
-coverage==4.5.4
+coverage>=6.3.3
 Sphinx==1.8.5
 twine==1.14.0
 pytest==6.2.4
@@ -19,3 +19,10 @@ requests[security]
 responses
 aioresponses
 python-jose==3.3.0
+orjson
+certifi>=2022.5.18.1
+Babel>=2.10.0
+charset_normalizer>=2.0.12
+click>=8.1.3
+attrs>=21.3.0
+alabaster>=0.7.11

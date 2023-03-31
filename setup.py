@@ -2,7 +2,7 @@
 
 """The setup script."""
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -11,17 +11,20 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    'connexion[swagger-ui]>=2.6.0',
+    'connexion>=3.0.0a2',
     'tenacity',
-    'requests[security]',
-    'python-jose==3.3.0',
+    'httpx[http2]',
+    'pyjwt',
+    'orjson',
+    'uvicorn',
+    'opentelemetry-distro-asgi',
 ]
 
 test_requirements = [
     'pytest>=3',
-    'pytest-aiohttp',
+    'pytest-asyncio',
     'pytest-cov>=2.8.1',
-    'responses'
+    'respx>=0.16.3',
 ]
 
 setup(

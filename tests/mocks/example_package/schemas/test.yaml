@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Auth Apis
+  title: Package Apis
   version: '1.0'
 servers:
   - url: /package/v1/

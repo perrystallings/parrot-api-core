@@ -1,5 +1,5 @@
 # import pytest
-# from aioresponses import aioresponses
+# import respx
 #
 #
 # def add_default_mocks(responses, app_settings):

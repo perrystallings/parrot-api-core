@@ -1,0 +1,21 @@
+openapi: 3.0.0
+info:
+  title: Base Api
+  version: '1.0'
+servers:
+  - url: /status/v1/
+paths:
+  /healthcheck:
+    get:
+      operationId: parrot_api.core.server.healthcheck
+      responses:
+        200:
+          description: Health check
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: "OK"

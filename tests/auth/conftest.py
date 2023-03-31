@@ -1,5 +1,4 @@
 import pytest
-import responses
 from parrot_api.core import generate_random_id
 
 issuer_list = [generate_random_id() for _ in range(3)]
@@ -133,7 +132,6 @@ def user_access_headers(app_settings, signing_key):
     return generate_oauth_headers(access_token=get_token(token, app_settings))
 
 
-@responses.activate
 def get_token(token, app_settings):
     from parrot_api.core.auth.oauth import get_service_access_token
     responses.add(

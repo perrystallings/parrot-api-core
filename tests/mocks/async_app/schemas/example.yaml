@@ -7,7 +7,7 @@ servers:
 paths:
   /hello:
     get:
-      operationId: parrot_api.core.server.async_hello
+      operationId: parrot_api.core.server.hello
       responses:
         200:
           description: returns what you send

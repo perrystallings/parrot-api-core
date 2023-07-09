@@ -14,7 +14,7 @@ requirements = [
     'connexion>=3.0.0a2',
     'tenacity',
     'httpx[http2]',
-    'pyjwt',
+    'python-jose',
     'orjson',
     'uvicorn',
     'opentelemetry-distro-asgi',
@@ -52,14 +52,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/perrystallings/parrot_api_core',
-    version='0.1.7',
-    zip_safe=False,
-    extras_require={
-        'async': [
-            'aiohttp>=3.6.2',
-            'aiohttp_jinja2>=1.2.0',
-            'orjson',
-            'aioresponses'
-        ],
-    },
+    version='0.1.11',
+    zip_safe=False
 )

@@ -7,7 +7,7 @@ servers:
 paths:
   /hello:
     get:
-      operationId: parrot_api.core.server.say_hello
+      operationId: parrot_api.core.server.hello
       security:
         - oauth2:
             - get:hello
@@ -40,7 +40,7 @@ components:
           tokenUrl: /auth/v1/oauth/token
     oauth2_async:
       type: oauth2
-      x-tokenInfoFunc: parrot_api.core.auth.oauth.verify_token_async
+      x-tokenInfoFunc: parrot_api.core.auth.oauth.verify_token
       flows:
         clientCredentials:
           tokenUrl: /auth/v1/oauth/token

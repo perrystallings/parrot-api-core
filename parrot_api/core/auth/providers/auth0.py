@@ -1,4 +1,4 @@
-def get_token(client_id, client_secret, audience, auth_server):
+async def get_token(client_id, client_secret, audience, auth_server):
     from parrot_api.core import safe_json_request
     body = dict(
         client_id=client_id,
@@ -7,7 +7,7 @@ def get_token(client_id, client_secret, audience, auth_server):
         grant_type="client_credentials"
     )
 
-    status_code, js = safe_json_request(
+    status_code, js = await safe_json_request(
         url=auth_server, method='POST',
         json=body
     )

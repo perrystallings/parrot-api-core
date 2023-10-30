@@ -1,4 +1,6 @@
+import httpx
 import pytest
+
 from parrot_api.core import generate_random_id
 
 issuer_list = [generate_random_id() for _ in range(3)]
@@ -36,11 +38,11 @@ def test_directory():
 def app_settings(test_directory):
     from parrot_api.core import get_settings
     import os
-    settings=get_settings(env_folder=os.path.join(test_directory, 'mocks/settings'), refresh=True)
+    settings = get_settings(env_folder=os.path.join(test_directory, 'mocks/settings'), refresh=True)
     return settings
 
 
-@pytest.fixture( )
+@pytest.fixture()
 def signing_key(test_directory):
     import os
     import json
@@ -50,7 +52,7 @@ def signing_key(test_directory):
     return key
 
 
-@pytest.fixture( )
+@pytest.fixture()
 def public_keys(test_directory):
     import os
     import json
@@ -65,11 +67,11 @@ def client(test_directory):
     import os
     from parrot_api.core.server import create_server
     app = create_server(spec_dir=os.path.join(test_directory, 'mocks/schemas'))
-    return app.app.test_client()
+    return app.test_client()
 
 
 @pytest.fixture()
-def valid_access_headers(app_settings, signing_key):
+async def valid_access_headers(app_settings, respx_mock, signing_key):
     from parrot_api.core import generate_oauth_headers
     from parrot_api.core.auth.jwt import format_access_token, sign_token
     from parrot_api.core.common import generate_random_id
@@ -82,11 +84,11 @@ def valid_access_headers(app_settings, signing_key):
     )
     token = sign_token(payload=payload, signing_key=signing_key)
 
-    return generate_oauth_headers(access_token=get_token(token, app_settings))
+    return generate_oauth_headers(access_token=await get_token(token=token, app_settings=app_settings, respx_mock=respx_mock))
 
 
 @pytest.fixture()
-def invalid_access_headers(app_settings, issuer, signing_key):
+async def invalid_access_headers(app_settings, respx_mock, issuer, signing_key):
     from parrot_api.core import generate_oauth_headers
     from parrot_api.core.auth.jwt import format_access_token, sign_token
     from parrot_api.core.common import generate_random_id
@@ -97,11 +99,11 @@ def invalid_access_headers(app_settings, issuer, signing_key):
     )
     token = sign_token(payload=payload, signing_key=signing_key)
 
-    return generate_oauth_headers(access_token=get_token(token, app_settings))
+    return generate_oauth_headers(access_token=await get_token(token=token, app_settings=app_settings, respx_mock=respx_mock))
 
 
 @pytest.fixture()
-def unauthorized_access_headers(app_settings, signing_key):
+async def unauthorized_access_headers(app_settings, respx_mock, signing_key):
     from parrot_api.core import generate_oauth_headers
     from parrot_api.core.auth.jwt import format_access_token, sign_token
     from parrot_api.core.common import generate_random_id
@@ -113,11 +115,11 @@ def unauthorized_access_headers(app_settings, signing_key):
     )
     token = sign_token(payload=payload, signing_key=signing_key)
 
-    return generate_oauth_headers(access_token=get_token(token, app_settings))
+    return generate_oauth_headers(access_token=await get_token(token=token, app_settings=app_settings, respx_mock=respx_mock))
 
 
 @pytest.fixture()
-def user_access_headers(app_settings, signing_key):
+async def user_access_headers(app_settings, respx_mock, signing_key):
     from parrot_api.core.requests import generate_oauth_headers
     from parrot_api.core.auth.jwt import format_access_token, sign_token
     from parrot_api.core.common import generate_random_id
@@ -129,13 +131,11 @@ def user_access_headers(app_settings, signing_key):
     )
     token = sign_token(payload=payload, signing_key=signing_key)
     print(payload)
-    return generate_oauth_headers(access_token=get_token(token, app_settings))
+    return generate_oauth_headers(access_token=await get_token(token=token, app_settings=app_settings, respx_mock=respx_mock))
 
 
-def get_token(token, app_settings):
+def get_token(token, respx_mock, app_settings):
     from parrot_api.core.auth.oauth import get_service_access_token
-    responses.add(
-        responses.Response(method=responses.POST, url=app_settings['auth_server'],
-                           json=dict(access_token=token, expires_in=86400),
-                           status=200))
+    respx_mock.post(url=app_settings['auth_server']).side_effect = httpx.Response(200, json=dict(access_token=token,
+                                                                                                 expires_in=86400))
     return get_service_access_token(service_name='test', refresh=True)

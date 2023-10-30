@@ -11,13 +11,12 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    'connexion>=3.0.0a2',
+    'connexion[swagger-ui]>=3.0.0a6',
     'tenacity',
     'httpx[http2]',
     'python-jose',
     'orjson',
     'uvicorn',
-    'opentelemetry-distro-asgi',
 ]
 
 test_requirements = [
@@ -52,6 +51,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/perrystallings/parrot_api_core',
-    version='0.1.11',
+    version='0.1.13',
     zip_safe=False
 )

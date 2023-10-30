@@ -6,7 +6,7 @@ def client(test_directory):
     import os
     from parrot_api.core.server import create_server
     app = create_server(spec_dir=os.path.join(test_directory, 'mocks/example_app/schemas'))
-    return app.app.test_client()
+    return app.app.tpest_client()
 
 
 def test_package_apis(test_directory):

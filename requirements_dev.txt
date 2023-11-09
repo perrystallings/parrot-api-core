@@ -5,6 +5,6 @@ respx
 tenacity
 pyjwt
 orjson
-connexion[swagger-ui]>=3.0.0a2
+connexion[swagger-ui]>=3.0.1
 uvicorn
 pytest-asyncio

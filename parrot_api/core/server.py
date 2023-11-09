@@ -1,4 +1,4 @@
-def create_server(spec_dir, additional_middleware: list = None, debug=False):
+def create_server(spec_dir, additional_middleware: list = None, lifespan_func=None, debug=False):
     from connexion import AsyncApp, ConnexionMiddleware
     import os
     import orjson
@@ -7,7 +7,7 @@ def create_server(spec_dir, additional_middleware: list = None, debug=False):
 
     middleware_stack = ConnexionMiddleware.default_middlewares + additional_middleware if additional_middleware else ConnexionMiddleware.default_middlewares
 
-    app = AsyncApp(__name__, middlewares=middleware_stack, jsonifier=orjson)
+    app = AsyncApp(__name__, middlewares=middleware_stack, lifespan=lifespan_func, jsonifier=orjson)
     for spec in os.listdir(spec_dir):
         app.add_api(specification=os.path.join(spec_dir, spec), validate_responses=debug)
 
@@ -23,6 +23,7 @@ def create_server(spec_dir, additional_middleware: list = None, debug=False):
 
 async def healthcheck():
     return dict(status='ok')
+
 
 async def hello():
     return dict(status='ok')

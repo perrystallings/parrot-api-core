@@ -32,6 +32,7 @@ def get_settings(settings_type='app', env_folder=None, refresh=False):
         if settings['app'].get('environment', 'test') == 'test':
             prefix = 'test' + str(generate_random_id().split('-')[0])
         __settings__['app']['test_prefix'] = prefix
+
     return __settings__.get(settings_type, dict())
 
 

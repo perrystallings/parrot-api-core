@@ -10,21 +10,19 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = [
-    'connexion[swagger-ui]>=3.0.0',
-    'tenacity',
-    'httpx[http2]',
-    'python-jose',
-    'orjson',
-    'uvicorn',
-]
+with open('README.rst') as readme_file:
+    readme = readme_file.read()
 
-test_requirements = [
-    'pytest>=3',
-    'pytest-asyncio',
-    'pytest-cov>=2.8.1',
-    'respx>=0.16.3',
-]
+with open('HISTORY.rst') as history_file:
+    history = history_file.read()
+
+with open('requirements.txt') as requirements_file:
+    requirements = requirements_file.read()
+
+with open('requirements_dev.txt') as test_requirements_file:
+    test_requirements = test_requirements_file.read()
+
+
 
 setup(
     author="Perry Stallings",
@@ -49,8 +47,9 @@ setup(
     name='parrot-api-core',
     packages=['parrot_api.core', 'parrot_api.core.auth', 'parrot_api.core.auth.providers'],
     test_suite='tests',
+    extras_require={},
     tests_require=test_requirements,
     url='https://github.com/perrystallings/parrot_api_core',
-    version='0.1.16',
+    version='0.1.17',
     zip_safe=False
 )

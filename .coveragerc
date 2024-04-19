@@ -1,0 +1,6 @@
+[run]
+concurrency = thread,gevent
+omit =
+    tests/*
+    alembic/*
+    schemas/*

@@ -108,8 +108,8 @@ def process_response(method, url, resp, raise_over, filtered_response_keys, log_
             url=url,
             status=status,
             created_ts=datetime.now(tz=timezone.utc).timestamp(),
+            response={k: v for k, v in js.items() if k not in filtered_response_keys},
             **log_attributes,
-            **{k: v for k, v in js.items() if k not in filtered_response_keys}
         )
     )
     if status >= raise_over:

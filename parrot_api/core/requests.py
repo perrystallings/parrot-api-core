@@ -33,7 +33,7 @@ def safe_json_request(method, url, stop=stop_after_attempt(3), reraise=True, syn
                       **kwargs):
     client = get_client(sync=sync)
     if log_attributes is None:
-        log_attributes = {k: v for k, v in kwargs.items() if kwargs not in ['headers']}
+        log_attributes = {k: v for k, v in kwargs.items() if k not in ['headers', 'files']}
     if filtered_response_keys is None:
         filtered_response_keys = []
     log_event(

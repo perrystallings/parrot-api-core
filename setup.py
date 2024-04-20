@@ -50,6 +50,6 @@ setup(
     extras_require={},
     tests_require=test_requirements,
     url='https://github.com/perrystallings/parrot_api_core',
-    version='0.1.19',
+    version='0.1.20',
     zip_safe=False
 )

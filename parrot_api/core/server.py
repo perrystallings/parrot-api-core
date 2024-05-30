@@ -1,15 +1,52 @@
-def create_server(spec_dir, additional_middleware: list = None, debug=False, **kwargs):
+from connexion.middleware.abstract import SpecMiddleware
+from connexion.middleware.context import ContextMiddleware
+from connexion.middleware.exceptions import ExceptionMiddleware
+from connexion.middleware.lifespan import Lifespan, LifespanMiddleware
+from connexion.middleware.request_validation import RequestValidationMiddleware
+from connexion.middleware.response_validation import ResponseValidationMiddleware
+from connexion.middleware.routing import RoutingMiddleware
+from connexion.middleware.security import SecurityMiddleware
+from connexion.middleware.swagger_ui import SwaggerUIMiddleware
+from functools import partialmethod, partial
+from connexion.options import SwaggerUIOptions
+
+
+def create_server(spec_dir, additional_middleware: list = None, debug=False, url_format=None, app_settings=None, **kwargs):
     from connexion import AsyncApp, ConnexionMiddleware
     import os
     import orjson
     import yaml
     from parrot_api.core.common import get_subpackage_paths
-
-    middleware_stack = ConnexionMiddleware.default_middlewares + additional_middleware if additional_middleware else ConnexionMiddleware.default_middlewares
-
+    from connexion.middleware import MiddlewarePosition
+    from starlette.middleware.cors import CORSMiddleware
+    if app_settings is None:
+        app_settings = dict()
+    middleware_stack = [
+        partial(CORSMiddleware,
+            allow_origins=app_settings.get("cors_origins", ['*']),
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        ),
+        ExceptionMiddleware,
+        SwaggerUIMiddleware,
+        RoutingMiddleware,
+        SecurityMiddleware,
+        RequestValidationMiddleware,
+        ResponseValidationMiddleware,
+        LifespanMiddleware,
+        ContextMiddleware,
+    ]
+    if additional_middleware:
+        middleware_stack.extend(additional_middleware)
     app = AsyncApp(__name__, middlewares=middleware_stack, jsonifier=orjson, **kwargs)
+
     for spec in os.listdir(spec_dir):
-        app.add_api(specification=os.path.join(spec_dir, spec), validate_responses=debug)
+        url = '/{version}/openapi.json'.format(version=spec.split('.')[0])
+        if url_format is not None:
+            url = url_format.format(version=spec.split('.')[0], **app_settings)
+        options = SwaggerUIOptions(swagger_ui_config=dict(url=url))
+        app.add_api(specification=os.path.join(spec_dir, spec), validate_responses=debug, swagger_ui_options=options)
 
     for path in get_subpackage_paths():
         schema_directory = os.path.join(path, 'schemas/')
